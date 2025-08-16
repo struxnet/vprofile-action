@@ -1,0 +1,28 @@
+name: "Vprofile Actions"
+on: workflow_dispatch
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: vprofile-app
+  EKS_CLUSTER: vprofile-eks
+
+jobs:
+  Testing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      
+      - name: Maven test
+        run: mvn test
+      
+      - name: Checkstyle
+        run: mvn checkstyle:checkstyle
+
+      - name: Set Java 11
+        uses: actions/setupjava@v3
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: SonarQube
+        uses: warchant/setup-sonar-scanner@v7
