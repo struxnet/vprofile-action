@@ -1,9 +1,9 @@
 name: "Vprofile Actions"
 on: workflow_dispatch
 env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: vprofile-app
-  EKS_CLUSTER: vprofile-eks
+  AWS_REGION: eu-central-1
+  ECR_REPOSITORY: ammardev-demo-security
+  EKS_CLUSTER: ammar-demo-app-eks-cluster
 
 jobs:
   Testing:
@@ -18,34 +18,11 @@ jobs:
       - name: Checkstyle
         run: mvn checkstyle:checkstyle
 
-      - name: Set Java 11
+      - name: Set Java 17
         uses: actions/setupjava@v3
         with:
           distribution: temurin
-          java-version: 11
-
-      # Run sonar-scanner
-      - name: SonarQube Scan
-        run: sonar-scanner
-           -Dsonar.host.url=${{ secrets.SONAR_URL }}
-           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-           -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-           -Dsonar.sources=src/
-           -Dsonar.junit.reportsPath=target/surefire-reports/ 
-           -Dsonar.jacoco.reportsPath=target/jacoco.exec 
-           -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
-           -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/  
-
-      # Check the Quality Gate status.
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        # Force to fail step after specific time.
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_URL }} #OPTIONAL
+          java-version: 17
 
   BUILD_AND_PUBLISH:   
     needs: Testing
